@@ -1,52 +1,4 @@
-const Player = (playerName, marker, playerType) => {
-    playerName
-    const playAMove = (cell) => {
-        // play move function
-        // change cell status to "filled"
-        if (cellArray[cell.id].empty === true) {
-            cell.innerText = `${activePlayer.marker}`;
-
-            cellArray[cell.id].empty = false;
-            cellArray[cell.id].marked = activePlayer.marker;
-            game.gamePlay();
-            game.switchPlayer();
-        } else alert('Please choose another spot!');     
-    }; 
-    return { 
-        playerName, 
-        marker, 
-        // playerType,
-        playAMove 
-    };
-}
-
-const gameFlow = (() => {
-    let winner;
-    let gameEnd = false;
-
-    const switchPlayer = () => {
-        activePlayer = activePlayer === players[0] ? players[1] : players[0];
-        text.innerText = activePlayer.playerName + '\'s turn'
-    }
-
-    const gamePlay = () => { //gameplay used to be called checkWinner
-        let gameWin = false;
-        let gameDraw = false;
-    }
-
-    const playerOne = Player('Player One', 'X');
-    // set playerTwo type as person || computer
-    const playerTwo = Player('Player Two', 'O');
-    const players = [ playerOne, playerTwo ];
-    let activePlayer = players[0];
-
-    // reset board function
-    return {
-        playerOne,
-        playerTwo,
-        activePlayer
-    }
-})();
+'use strict'
 
 
 const gameBoard = (() => {
@@ -58,15 +10,22 @@ const gameBoard = (() => {
     };
 
     let gameBoardState = []
+    const container = document.querySelector('.cell_container');
 
     function addToBoard() {
         for (let i = 0; i < 9; i++) {
             let cell = BoardCell(i);
             gameBoardState.push(cell);
+            const divCell = document.createElement('div');
+            divCell.setAttribute('class', 'cell');
+            divCell.setAttribute('id',gameBoardState[i].value);
+            divCell.innerText = i;
+            container.appendChild(divCell);
         }
         console.log(gameBoardState);
     }
     addToBoard();
+
 
     function checkForWin(
         gameBoardState, 
@@ -102,7 +61,73 @@ const gameBoard = (() => {
 
     return { 
         gameBoardState,
+        container,
         checkForWin
     }
 })();
 
+// maybe delete marked inside playAMove? - may not need
+const Player = (name, marker, playerType) => {
+    name
+    const playAMove = (
+        cell, // correspond to DOM div ID
+        activePlayer = gameFlow.setActivePlayer().activePlayer,
+        board = gameBoard.gameBoardState,
+        displayCell = gameBoard.container) => {
+        if (board[cell].empty === true) {
+            document.getElementById(cell).innerText = `${activePlayer.marker}`;
+
+            board[cell].empty = false;
+            board[cell].marked = activePlayer.marker;
+            //game.gamePlay();
+            gameFlow.setActivePlayer();
+        } else alert('Please choose another spot!');
+       console.log(board);  
+    }; 
+
+    return { 
+        name, 
+        marker, 
+        // playerType,
+        playAMove 
+    };
+}
+
+const gameFlow = (() => {
+    let winner;
+    let gameEnd = false;
+
+    const playerOne = Player('Player One', 'X');
+    // set playerTwo type as person || computer
+    const playerTwo = Player('Player Two', 'O');
+    
+    const players = [ playerOne, playerTwo ];
+    let activePlayer = players[0];
+    
+    function setActivePlayer() {
+
+        const switchPlayer = () => {
+            activePlayer = activePlayer === players[0] ? players[1] : players[0];
+        }
+        switchPlayer();
+
+        return {
+            switchPlayer,
+            activePlayer
+        }
+        
+    }
+
+    const gamePlay = () => { //gameplay used to be called checkWinner
+        let gameWin = false;
+        let gameDraw = false;
+    }
+
+    // reset board function
+    return {
+        playerOne,
+        playerTwo,
+        setActivePlayer,
+        gamePlay
+    }
+})();
