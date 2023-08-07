@@ -2,6 +2,8 @@
 
 
 const gameBoard = (() => {
+    let gameWin = false;
+    let gameDraw = false;
     const BoardCell = (value, marked, empty) => {
         value,
         marked, 
@@ -26,44 +28,59 @@ const gameBoard = (() => {
     }
     addToBoard();
 
-
-    function checkForWin(
-        gameBoardState, 
-        player = gameFlow.activePlayer.marker
-        ) {
+    const checkForWin = () => {
+    let position = gameBoardState;
 
         // diagonal
-        if (
-        (gameBoardState[1] === player && gameBoardState[5] === player && gameBoardState[9] === player) ||
-        (gameBoardState[3] === player && gameBoardState[5] === player && gameBoardState[7] === player) 
-        ) {
-            return true;
-        }
+        (() => {
+            if (
+                ( (position[0].marked === position[4].marked) && (position[4].marked === position[8].marked) ) ||
+                ( (position[2].marked === position[4].marked) &&  (position[4].marked === position[6].marked) )
+                ) {
+                    gameWin = true;
+                    console.log('diagonal win')
+                    console.log(gameWin);
+                    return gameWin;
+                }
+            }
+        )();
 
         // horizontal
-        if (
-            (gameBoardState[0] === player && gameBoardState[1] == player && gameBoardState[2] === player) ||
-            (gameBoardState[3] === player && gameBoardState[4] == player && gameBoardState[5] === player) ||
-            (gameBoardState[6] === player && gameBoardState[7] == player && gameBoardState[8] === player)
-        ) {
-            return true;
-        }
+        (() => {
+            if (
+                ( (position[0].marked === position[1].marked) && (position[1].marked ===  position[2].marked) ) ||
+                ( (position[3].marked === position[4].marked) && (position[4].marked ===  position[5].marked) ) ||
+                ( (position[6].marked === position[7].marked) && (position[7].marked ===  position[8].marked) )
+             )
+              {
+                gameWin = true;
+                console.log('horizontal win')
+                return gameWin;
+            }
+        })
 
-        // vertical 
-        if (
-            (gameBoardState[0] === player && gameBoardState[3] == player && gameBoardState[6] === player) ||
-            (gameBoardState[1] === player && gameBoardState[4] == player && gameBoardState[7] === player) ||
-            (gameBoardState[2] === player && gameBoardState[5] == player && gameBoardState[8] === player) 
-        ) {
-            return true;
-        }
+        // vertical
+        (() => {
+            if (
+                (position[0].marked === position[3].marked) && (position[3].marked === position[6].marked ) ||
+                (position[1].marked === position[4].marked) && (position[4].marked === position[7].marked ) ||
+                (position[2].marked === position[5].marked) && (position[5].marked === position[8].marked )
+            ) {
+                gameWin = true;
+                console.log('vertical win')
+                return gameWin;
+            }
+        })
+        return gameWin;
     }
+    
 
     return { 
         gameBoardState,
         container,
-        checkForWin
+        checkForWin,
     }
+
 })();
 
 // maybe delete marked inside playAMove? - may not need
@@ -79,9 +96,11 @@ const Player = (name, marker, playerType) => {
 
             board[cell].empty = false;
             board[cell].marked = activePlayer.marker;
-            //game.gamePlay();
-            gameFlow.setActivePlayer();
+            gameFlow.setActivePlayer().switchPlayer();
         } else alert('Please choose another spot!');
+        // gameBoard.checkForWin();
+        gameBoard.checkForWin();
+       console.log('checked for win');  
        console.log(board);  
     }; 
 
@@ -89,7 +108,7 @@ const Player = (name, marker, playerType) => {
         name, 
         marker, 
         // playerType,
-        playAMove 
+        playAMove
     };
 }
 
@@ -104,12 +123,13 @@ const gameFlow = (() => {
     const players = [ playerOne, playerTwo ];
     let activePlayer = players[0];
     
-    function setActivePlayer() {
-
+    const setActivePlayer = () => {
+        activePlayer
         const switchPlayer = () => {
             activePlayer = activePlayer === players[0] ? players[1] : players[0];
+            console.log(activePlayer)
         }
-        switchPlayer();
+        // switchPlayer();
 
         return {
             switchPlayer,
@@ -118,16 +138,23 @@ const gameFlow = (() => {
         
     }
 
-    const gamePlay = () => { //gameplay used to be called checkWinner
-        let gameWin = false;
-        let gameDraw = false;
+    if (gameBoard.gameWin === true) {
+        // declareWinner();
+        // endGame();
+        gameEnd = true;
+        console.log('game win is TRUE!')
+    } /* else if (gameDraw === true) {
+        console.log('it\'s a tie!');
+        text.innerText = 'It\s a tie!'
+        text.innerText = 'Tie!'
+        gameEnd = true;
     }
+    */
 
     // reset board function
     return {
         playerOne,
         playerTwo,
         setActivePlayer,
-        gamePlay
     }
 })();
