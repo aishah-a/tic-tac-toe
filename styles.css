@@ -1,0 +1,70 @@
+:root {
+    /* color palette */
+    --black: #060606;
+    --darkPurple: #390099;
+    --orange: #FB5622;
+    --lilac: #7871AA;
+    --pink: #F6BDD1;
+    --lightPink: #F6E4F6;
+
+
+    /* fonts */
+    --titleFont: 'Passion One', sans-serif;
+    --textFont: 'Noto Sans JP', sans-serif;
+
+}
+
+* {
+    margin: 1px;
+}
+
+body {
+    background-color: var(--black);
+}
+
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1#title {
+    color: white;
+    text-align: center;
+    font-family: var(--titleFont);
+    font-size: 4rem;
+    padding: 10px;
+}
+
+
+div#board {
+    flex-grow: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+div.cell_container {
+    border: 2px solid white;
+    width: 425px;
+    height: 425px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    margin: 10px;
+}
+
+.cell {
+    color: var(--lightPink);
+    border: 1px solid var(--lightPink);
+    padding: 8px;
+    margin: 0;
+    font-family: var(--textFont);
+    font-size: 5rem;
+    text-align: center;
+}
+
+.cell:hover {
+    background-color: var(--darkPurple);
+}
