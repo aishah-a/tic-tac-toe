@@ -1,7 +1,6 @@
 'use strict'
 
 const container = document.querySelector('.cell_container');
-const buttonDiv = document.querySelector('.button');
 let gameWin = false
 let gameEnd = false;
 let gameDraw = false;
@@ -81,7 +80,6 @@ const gamePlay = () => {
             console.log('Active player is ' + activePlayer.name)
             return activePlayer
         }
-        
     }
 
     function checkWin() {
@@ -172,13 +170,14 @@ const displayController = (() => {
             board.insertBefore(text, container);
         }
 
+        const page = document.querySelector('.page');
+        const newGameBtn = document.createElement('button');
+        newGameBtn.innerText = 'Play again?';
+
         if (gameEnd === true) {
-            const page = document.querySelector('.page');
             // not(newGameBtn).style.opacity = 0.6;
             // page.style.opacity = 0.6;
-            page.appendChild(newGameBtn);
-            
-            
+            page.appendChild(newGameBtn); 
         }
 
     }
@@ -194,15 +193,32 @@ const displayController = (() => {
     // add event listeners
     const cellList = document.querySelectorAll('.cell');
 
+    /*
+    function lighten(cell) {
+        cell.style.backgroundColor = '#F6BDD1'
+    }
+    */
+   
+
     cellList.forEach((cell) => {
-    cell.addEventListener('click', () => {
-        activePlayer.playMove(cell.id);
+        cell.addEventListener('click', () => {
+            activePlayer.playMove(cell.id);
         })
+        
+        cell.addEventListener('mouseenter', () => {
+            if (gameEnd !== true) {
+                cell.style.backgroundColor = '#F6BDD1';
+            } else {
+                // do nothing
+            }
+        })
+
+        cell.addEventListener('mouseleave', () => {
+            cell.style.backgroundColor = '#060606'
+        })
+
     })
 
-    
-    const newGameBtn = document.createElement('button');
-    newGameBtn.innerText = 'Play again?';
     
 
 
