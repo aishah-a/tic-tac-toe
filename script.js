@@ -51,7 +51,7 @@ const Player = (name, marker) => {
             gamePlay().checkGameOver();
             gamePlay().switchPlayer();
             displayController.updateDisplay();
-        } else if (board[cell].empty !== true) {
+        } else if ((board[cell].empty !== true) && (gameEnd !== true)){
             alert('Please choose another spot!');
         } else if (gameEnd === true) {
             // do nothing
@@ -72,6 +72,8 @@ let activePlayer = players[0];
 
 const gamePlay = () => {
 
+    let board = gameBoard.gameBoardArr;
+
     function switchPlayer() {
         if (gameWin !== true) {
             activePlayer = activePlayer === playerOne ? playerTwo : playerOne;
@@ -82,7 +84,6 @@ const gamePlay = () => {
     }
 
     function checkWin() {
-        let board = gameBoard.gameBoardArr;
         // horizontal
         if (
         (board[0].marked === board[1].marked && board[1].marked === board[2].marked && board[1].marked !== undefined) ||
@@ -114,6 +115,19 @@ const gamePlay = () => {
             console.log('vertical win');
             gameWin = true;
         }
+
+        // tie
+
+        const checkMarked = arr => arr.every((obj) => {
+            return obj.marked !== undefined;
+        });
+        
+        let answer = checkMarked(board);
+        if ((gameWin !== true) && (answer === true)) {
+            console.log('tie');
+            gameDraw = true
+        }
+
     }
 
     const checkGameOver = () => {
@@ -124,12 +138,15 @@ const gamePlay = () => {
             gameEnd = true;
             console.log('game win is TRUE!');
             console.log('The winner is: ' + winner.name);
-            return {winner}
+            return { winner }
             // displayController.text.remove();
             // displayController.text.innerText = 'The winner is ' + `${activePlayer.name}`
             // board.insertBefore(displayController.text, container);
             // return gameEnd;
-        } // else console.log('nope')
+        } else if (gameDraw === true) {
+            gameEnd = true;
+            console.log('It\'s a tie!');
+        }
     }
 
     return {
@@ -149,9 +166,15 @@ const displayController = (() => {
         text.innerText = activePlayer.name + '\'s turn!';
         board.insertBefore(text, container);
         
-        if ((gameWin === true) && (gameEnd === true)) {
+        if (gameWin === true) {
             text.remove();
             text.innerText = 'The winner is ' + activePlayer.name
+            board.insertBefore(text, container);
+        }
+
+        if (gameDraw === true) {
+            text.remove();
+            text.innerText = 'It\'s a tie!';
             board.insertBefore(text, container);
         }
 
@@ -165,6 +188,14 @@ const displayController = (() => {
     }
     // resetBoard();
 
+    // add event listeners
+    const cellList = document.querySelectorAll(".cell");
+
+    cellList.forEach((cell) => {
+    cell.addEventListener("click", () => {
+        activePlayer.playMove(cell.id);
+        })
+    })
 
     return {
         updateDisplay,
@@ -174,28 +205,6 @@ const displayController = (() => {
 })();
 
 
-/*
-
-
-
-const gameFlow = (() => {
-
-
-
-    
-    return {
-        playerOne,
-        playerTwo,
-        setActivePlayer,
-        checkGameOver
-    }
-})();
-
-
-
-*/
-
-
 //  TO DO
-// REMOVE PROMPT TEXT WHEN DECLAREWINNER RUNS AND REPLACE WITH WINNER NAME
+// CHECK TIE
 // REMOVE NUMBERS FROM GRID
