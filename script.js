@@ -90,14 +90,13 @@ const Player = (name, marker) => {
 
             board[cell].empty = false;
             board[cell].marked = activePlayer.marker;
-            // gameFlow.setActivePlayer().switchPlayer();
-            return gameFlow.setActivePlayer().switchPlayer();
         } else alert('Please choose another spot!');
         gameBoard.checkForWin();
        console.log('checked for win');
        // gamePlay.checkGameOver();
        gameFlow.checkGameOver();
        console.log(board);  
+       return gameFlow.setActivePlayer().switchPlayer();
     }; 
 
     return { 
