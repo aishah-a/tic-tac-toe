@@ -62,6 +62,38 @@ const gameBoard = (() => {
         gameWin = true;
     }
 
+    // tie
+    /*
+
+    (() => {
+                const checkMarked = arr => arr.every((obj) => {
+                    return obj.empty === false;
+                })
+        
+                let results = []
+                for (let i = 0; i < 3; i++) {
+                    let result = checkMarked(gameBoard[i]);
+                    results.push(result);
+                }
+        
+                const checkTrue = arr => arr.every((val) => {
+                    return val === true;
+                })
+        
+                if (results.length === 3) {
+                    let answer = checkTrue(results);
+                    if (answer === true) {
+                        if (gameWin === false) {
+                            gameDraw = true;
+                        }
+                    }
+                }
+            })();
+
+
+
+    */
+
     console.log('gameWin inside func is ' + gameWin)
     return gameWin
     }
@@ -160,34 +192,15 @@ const gameFlow = (() => {
     }
 })();
 
-
 const displayController = (() => {
     const text = document.createElement('div')
     text.setAttribute('id', 'prompt');
     text.innerText = 'Player One, please place your marker';
     board.insertBefore(text, container);
     
+    return text
 })();
 
 
-
-/*
-const checkGameOver = () => {
-    if (gameBoard.gameWin === true) {
-        // declareWinner();
-        // endGame();
-        console.log('hey people');
-        console.log(gameWin);
-        gameEnd = true;
-        console.log('game win is TRUE!')
-        return gameEnd;
-        } /* else if (gameDraw === true) {
-        console.log('it\'s a tie!');
-        text.innerText = 'It\s a tie!'
-        text.innerText = 'Tie!'
-        gameEnd = true;
-        
-    // } 
-    return { checkGameOver }  
-}
-*/
+//  TO DO
+// REMOVE PROMPT TEXT WHEN DECLAREWINNER RUNS AND REPLACE WITH WINNER NAME
