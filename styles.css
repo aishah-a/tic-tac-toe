@@ -68,3 +68,14 @@ div.cell_container {
 .cell:hover {
     background-color: var(--darkPurple);
 }
+
+div#prompt {
+    flex: 0.5;
+    font-family: var(--textFont);
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    padding: 10px;
+    margin: 5px;
+    
+}
