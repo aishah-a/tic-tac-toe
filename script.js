@@ -1,6 +1,8 @@
 'use strict'
 
 const container = document.querySelector('.cell_container');
+let gameWin = false
+let gameEnd = false;
 
 
 const gameBoard = (() => {
@@ -14,7 +16,6 @@ const gameBoard = (() => {
 
     let gameBoardState = []
     
-
     function addToBoard() {
         for (let i = 0; i < 9; i++) {
             let cell = BoardCell(i);
@@ -28,9 +29,10 @@ const gameBoard = (() => {
         console.log(gameBoardState);
     }
     addToBoard();
+    
 
     function checkForWin() {
-    let gameWin = 'false';
+    // let gameWin = 'false';
     // horizontal
     if (
         (gameBoardState[0].marked === gameBoardState[1].marked && gameBoardState[1].marked === gameBoardState[2].marked && gameBoardState[1].marked !== undefined) ||
@@ -94,7 +96,7 @@ const gameBoard = (() => {
 
     */
 
-    console.log('gameWin inside func is ' + gameWin)
+   //  console.log('gameWin inside func is ' + gameWin)
     return gameWin
     }
 
@@ -116,19 +118,25 @@ const Player = (name, marker) => {
         cell, // correspond to DOM div ID
         activePlayer = gameFlow.setActivePlayer().activePlayer,
         board = gameBoard.gameBoardState,
-        displayCell = gameBoard.container) => {
-        if (board[cell].empty === true) {
+        //displayCell = gameBoard.container
+        ) => {
+        if ((board[cell].empty === true) && (gameEnd !== true)) {
             document.getElementById(cell).innerText = `${activePlayer.marker}`;
 
             board[cell].empty = false;
             board[cell].marked = activePlayer.marker;
-        } else alert('Please choose another spot!');
-        gameBoard.checkForWin();
-       console.log('checked for win');
-       // gamePlay.checkGameOver();
-       gameFlow.checkGameOver();
-       console.log(board);  
-       return gameFlow.setActivePlayer().switchPlayer();
+            gameBoard.checkForWin();
+            console.log('checked for win');
+            // gamePlay.checkGameOver();
+            gameFlow.checkGameOver();
+            console.log(board);  
+        return gameFlow.setActivePlayer().switchPlayer();
+        } else if (board[cell].empty !== true) {
+            alert('Please choose another spot!');
+        } else if (((gameEnd == true) && (board[cell].empty !== true)) || (gameEnd == true))  {
+            // do nothing
+        }
+        
     }; 
 
     return { 
@@ -140,7 +148,7 @@ const Player = (name, marker) => {
 
 const gameFlow = (() => {
     let winner;
-    let gameEnd = false;
+    // let gameEnd = false;
 
     const playerOne = Player('Player One', 'X');
     const playerTwo = Player('Player Two', 'O');
@@ -149,12 +157,12 @@ const gameFlow = (() => {
     let activePlayer = players[0];
     
     const setActivePlayer = () => {
-        activePlayer
         const switchPlayer = () => {
             if (gameEnd !== true) {
                 activePlayer = activePlayer === players[0] ? players[1] : players[0];
                 console.log(activePlayer);
                 displayController.text.innerText = `${activePlayer.name}` + '\'s turn';
+                return activePlayer;
             }
         }
         // switchPlayer();
@@ -179,16 +187,12 @@ const gameFlow = (() => {
             displayController.text.remove();
             displayController.text.innerText = 'The winner is ' + `${activePlayer.name}`
             board.insertBefore(displayController.text, container);
-            // container.appendChild(displayController.text);
-            // displayController.text.innerText = 'The winner is ' + `${activePlayer.name}`
-            // board.insertBefore(displayController.text, container);
-            // displayController.text.innerText = 'The winner is ' + `${activePlayer.name}`
             return gameEnd;
     } else console.log('nope')
     }
 
     const declareWinner = () => {
-        winner = activePlayer.name = 'Player Two' ? 'Player One' : 'Player Two';
+        winner = activePlayer.name = 'Player One' ? 'Player Two' : 'Player One';
         console.log('The winner is ' + winner);
         return winner;
     }
