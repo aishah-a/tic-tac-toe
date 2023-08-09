@@ -152,7 +152,8 @@ const gameFlow = (() => {
         activePlayer
         const switchPlayer = () => {
             activePlayer = activePlayer === players[0] ? players[1] : players[0];
-            console.log(activePlayer)
+            console.log(activePlayer);
+            displayController.text.innerText = `${activePlayer.name}` + '\'s turn';
         }
         // switchPlayer();
         
@@ -198,7 +199,9 @@ const displayController = (() => {
     text.innerText = 'Player One, please place your marker';
     board.insertBefore(text, container);
     
-    return text
+    return {
+        text
+    }
 })();
 
 
