@@ -1,6 +1,7 @@
 'use strict'
 
 const container = document.querySelector('.cell_container');
+
 let gameWin = false
 let gameEnd = false;
 let gameDraw = false;
@@ -15,24 +16,10 @@ const gameBoard = (() => {
     };
 
     let gameBoardArr = []
-    
-    function addToBoard() {
-        for (let i = 0; i < 9; i++) {
-            let cell = BoardCell(i);
-            gameBoardArr.push(cell);
-            
-            const divCell = document.createElement('div');
-            divCell.setAttribute('class', 'cell');
-            divCell.setAttribute('id',gameBoardArr[i].value);
-            divCell.innerText = i;
-            container.appendChild(divCell);
-        }
-        console.log(gameBoardArr);
-    }
-    addToBoard();
 
     return {
-        gameBoardArr
+        gameBoardArr,
+        BoardCell
     } 
 
 })();
@@ -77,7 +64,6 @@ const gamePlay = () => {
     function switchPlayer() {
         if (gameWin !== true) {
             activePlayer = activePlayer === playerOne ? playerTwo : playerOne;
-            console.log('Active player is ' + activePlayer.name)
             return activePlayer
         }
     }
@@ -89,7 +75,6 @@ const gamePlay = () => {
         (board[3].marked === board[4].marked && board[4].marked === board[5].marked && board[4].marked !== undefined) ||
         (board[6].marked === board[7].marked && board[7].marked === board[8].marked && board[7].marked !== undefined)
         ) {
-            console.log('horizontal win!');
             gameWin = true;
             return gameWin;
         }
@@ -100,7 +85,6 @@ const gamePlay = () => {
                 (board[0].marked === board[4].marked && board[4].marked === board[8].marked) ||
                 (board[2].marked === board[4].marked && board[4].marked === board[6].marked)
             ) {
-                console.log('diagonal win!');
                 gameWin = true;
             }
         }
@@ -111,7 +95,6 @@ const gamePlay = () => {
             (board[1].marked === board[4].marked && board[4].marked === board[7].marked && board[4].marked !== undefined) ||
             (board[2].marked === board[5].marked && board[5].marked === board[8].marked && board[5].marked !== undefined) 
         ) {
-            console.log('vertical win');
             gameWin = true;
         }
 
@@ -122,7 +105,6 @@ const gamePlay = () => {
         
         let answer = checkMarked(board);
         if ((gameWin !== true) && (answer === true)) {
-            console.log('tie');
             gameDraw = true
         }
 
@@ -132,12 +114,9 @@ const gamePlay = () => {
         if (gameWin === true) {
             let winner = activePlayer;
             gameEnd = true;
-            console.log('game win is TRUE!');
-            console.log('The winner is: ' + winner.name);
             return { winner }
         } else if (gameDraw === true) {
             gameEnd = true;
-            console.log('It\'s a tie!');
         }
     }
 
@@ -148,7 +127,24 @@ const gamePlay = () => {
     }
 }
 
-const displayController = (() => {
+const displayController = ((
+    boardDisplay = gameBoard.gameBoardArr
+    ) => {
+
+        function addToBoard() {
+        for (let i = 0; i < 9; i++) {
+            let cell = gameBoard.BoardCell(i);
+            boardDisplay.push(cell);
+            
+            const divCell = document.createElement('div');
+            divCell.setAttribute('class', 'cell');
+            divCell.setAttribute('id',boardDisplay[i].value);
+            container.appendChild(divCell);
+        }
+    }
+    addToBoard();
+
+
     const text = document.createElement('div');
     text.setAttribute('class', 'prompt');
     text.innerText = 'Please place your marker, ' + activePlayer.name;
@@ -173,32 +169,20 @@ const displayController = (() => {
         const page = document.querySelector('.page');
         const newGameBtn = document.createElement('button');
         newGameBtn.innerText = 'Play again?';
+        const display = document.querySelector('#board');
 
         if (gameEnd === true) {
-            // not(newGameBtn).style.opacity = 0.6;
-            // page.style.opacity = 0.6;
+            display.style.opacity = 0.6;
             page.appendChild(newGameBtn); 
         }
 
+        newGameBtn.addEventListener('click', () => {
+            location.reload();
+        });
     }
-
-    // reset board
-    function resetBoard() {
-        for (let i = 0; i < 9; i++) {
-            document.getElementById(i).innerText = i;
-        }
-    }
-    // resetBoard();
 
     // add event listeners
     const cellList = document.querySelectorAll('.cell');
-
-    /*
-    function lighten(cell) {
-        cell.style.backgroundColor = '#F6BDD1'
-    }
-    */
-   
 
     cellList.forEach((cell) => {
         cell.addEventListener('click', () => {
@@ -218,9 +202,6 @@ const displayController = (() => {
         })
 
     })
-
-    
-
 
     return {
         updateDisplay,
