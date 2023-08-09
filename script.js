@@ -1,6 +1,7 @@
 'use strict'
 
 const container = document.querySelector('.cell_container');
+const buttonDiv = document.querySelector('.button');
 let gameWin = false
 let gameEnd = false;
 let gameDraw = false;
@@ -117,7 +118,6 @@ const gamePlay = () => {
         }
 
         // tie
-
         const checkMarked = arr => arr.every((obj) => {
             return obj.marked !== undefined;
         });
@@ -132,17 +132,11 @@ const gamePlay = () => {
 
     const checkGameOver = () => {
         if (gameWin === true) {
-            // declareWinner();
-            // endGame();
             let winner = activePlayer;
             gameEnd = true;
             console.log('game win is TRUE!');
             console.log('The winner is: ' + winner.name);
             return { winner }
-            // displayController.text.remove();
-            // displayController.text.innerText = 'The winner is ' + `${activePlayer.name}`
-            // board.insertBefore(displayController.text, container);
-            // return gameEnd;
         } else if (gameDraw === true) {
             gameEnd = true;
             console.log('It\'s a tie!');
@@ -178,6 +172,15 @@ const displayController = (() => {
             board.insertBefore(text, container);
         }
 
+        if (gameEnd === true) {
+            const page = document.querySelector('.page');
+            // not(newGameBtn).style.opacity = 0.6;
+            // page.style.opacity = 0.6;
+            page.appendChild(newGameBtn);
+            
+            
+        }
+
     }
 
     // reset board
@@ -189,13 +192,19 @@ const displayController = (() => {
     // resetBoard();
 
     // add event listeners
-    const cellList = document.querySelectorAll(".cell");
+    const cellList = document.querySelectorAll('.cell');
 
     cellList.forEach((cell) => {
-    cell.addEventListener("click", () => {
+    cell.addEventListener('click', () => {
         activePlayer.playMove(cell.id);
         })
     })
+
+    
+    const newGameBtn = document.createElement('button');
+    newGameBtn.innerText = 'Play again?';
+    
+
 
     return {
         updateDisplay,
@@ -206,5 +215,4 @@ const displayController = (() => {
 
 
 //  TO DO
-// CHECK TIE
 // REMOVE NUMBERS FROM GRID
