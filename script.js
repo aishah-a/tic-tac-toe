@@ -151,9 +151,11 @@ const gameFlow = (() => {
     const setActivePlayer = () => {
         activePlayer
         const switchPlayer = () => {
-            activePlayer = activePlayer === players[0] ? players[1] : players[0];
-            console.log(activePlayer);
-            displayController.text.innerText = `${activePlayer.name}` + '\'s turn';
+            if (gameEnd !== true) {
+                activePlayer = activePlayer === players[0] ? players[1] : players[0];
+                console.log(activePlayer);
+                displayController.text.innerText = `${activePlayer.name}` + '\'s turn';
+            }
         }
         // switchPlayer();
         
@@ -173,7 +175,14 @@ const gameFlow = (() => {
             console.log('hey people');
             gameEnd = true;
             console.log('game win is TRUE!');
-            console.log('active player after WIN is: ' + activePlayer.name)
+            console.log('active player after WIN is: ' + activePlayer.name);
+            displayController.text.remove();
+            displayController.text.innerText = 'The winner is ' + `${activePlayer.name}`
+            board.insertBefore(displayController.text, container);
+            // container.appendChild(displayController.text);
+            // displayController.text.innerText = 'The winner is ' + `${activePlayer.name}`
+            // board.insertBefore(displayController.text, container);
+            // displayController.text.innerText = 'The winner is ' + `${activePlayer.name}`
             return gameEnd;
     } else console.log('nope')
     }
@@ -195,10 +204,10 @@ const gameFlow = (() => {
 
 const displayController = (() => {
     const text = document.createElement('div')
-    text.setAttribute('id', 'prompt');
+    text.setAttribute('class', 'prompt');
     text.innerText = 'Player One, please place your marker';
     board.insertBefore(text, container);
-    
+
     return {
         text
     }
