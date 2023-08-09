@@ -3,201 +3,186 @@
 const container = document.querySelector('.cell_container');
 let gameWin = false
 let gameEnd = false;
-
+let gameDraw = false;
 
 const gameBoard = (() => {
-    let gameDraw = false;
+    
     const BoardCell = (value, marked, empty) => {
         value,
         marked,
         empty = true;
-        return { value, empty, marked } // maybe return marked if needed
+        return { value, empty, marked }
     };
 
-    let gameBoardState = []
+    let gameBoardArr = []
     
     function addToBoard() {
         for (let i = 0; i < 9; i++) {
             let cell = BoardCell(i);
-            gameBoardState.push(cell);
+            gameBoardArr.push(cell);
+            
             const divCell = document.createElement('div');
             divCell.setAttribute('class', 'cell');
-            divCell.setAttribute('id',gameBoardState[i].value);
+            divCell.setAttribute('id',gameBoardArr[i].value);
             divCell.innerText = i;
             container.appendChild(divCell);
         }
-        console.log(gameBoardState);
+        console.log(gameBoardArr);
     }
     addToBoard();
-    
 
-    function checkForWin() {
-    // let gameWin = 'false';
-    // horizontal
-    if (
-        (gameBoardState[0].marked === gameBoardState[1].marked && gameBoardState[1].marked === gameBoardState[2].marked && gameBoardState[1].marked !== undefined) ||
-        (gameBoardState[3].marked === gameBoardState[4].marked && gameBoardState[4].marked === gameBoardState[5].marked && gameBoardState[4].marked !== undefined) ||
-        (gameBoardState[6].marked === gameBoardState[7].marked && gameBoardState[7].marked === gameBoardState[8].marked && gameBoardState[7].marked !== undefined)
-        ) {
-        console.log('horizontal win!');
-        gameWin = true;
-    }
-
-    // diagonal
-    if (gameBoardState[4].marked !== undefined) {
-        if (
-            (gameBoardState[0].marked === gameBoardState[4].marked && gameBoardState[4].marked === gameBoardState[8].marked) ||
-            (gameBoardState[2].marked === gameBoardState[4].marked && gameBoardState[4].marked === gameBoardState[6].marked)
-        ) {
-            console.log('diagonal win!');
-            gameWin = true;
-        }
-    }
-
-    // vertical 
-    if (
-        (gameBoardState[0].marked === gameBoardState[3].marked && gameBoardState[3].marked === gameBoardState[6].marked && gameBoardState[3].marked !== undefined) ||
-        (gameBoardState[1].marked === gameBoardState[4].marked && gameBoardState[4].marked === gameBoardState[7].marked && gameBoardState[4].marked !== undefined) ||
-        (gameBoardState[2].marked === gameBoardState[5].marked && gameBoardState[5].marked === gameBoardState[8].marked && gameBoardState[5].marked !== undefined) 
-    ) {
-        console.log('vertical win');
-        gameWin = true;
-    }
-
-    // tie
-    /*
-
-    (() => {
-                const checkMarked = arr => arr.every((obj) => {
-                    return obj.empty === false;
-                })
-        
-                let results = []
-                for (let i = 0; i < 3; i++) {
-                    let result = checkMarked(gameBoard[i]);
-                    results.push(result);
-                }
-        
-                const checkTrue = arr => arr.every((val) => {
-                    return val === true;
-                })
-        
-                if (results.length === 3) {
-                    let answer = checkTrue(results);
-                    if (answer === true) {
-                        if (gameWin === false) {
-                            gameDraw = true;
-                        }
-                    }
-                }
-            })();
-
-
-
-    */
-
-   //  console.log('gameWin inside func is ' + gameWin)
-    return gameWin
-    }
-
-    checkForWin();
-    
-    // console.log ('gameWin outisde func is ' + gameWin);
-
-    return { 
-        gameBoardState,
-        container,
-        checkForWin
-    }
+    return {
+        gameBoardArr
+    } 
 
 })();
 
 const Player = (name, marker) => {
-    name
-    const playAMove = (
+    const playMove = (
         cell, // correspond to DOM div ID
-        activePlayer = gameFlow.setActivePlayer().activePlayer,
-        board = gameBoard.gameBoardState,
-        //displayCell = gameBoard.container
-        ) => {
-        if ((board[cell].empty === true) && (gameEnd !== true)) {
-            document.getElementById(cell).innerText = `${activePlayer.marker}`;
-
+        activePlayer,
+        board = gameBoard.gameBoardArr,
+        container) => {
+        if ((board[cell].empty === true) && (gameWin !== true)) {
+            document.getElementById(cell).innerText = `${marker}`;
             board[cell].empty = false;
-            board[cell].marked = activePlayer.marker;
-            gameBoard.checkForWin();
-            console.log('checked for win');
-            // gamePlay.checkGameOver();
-            gameFlow.checkGameOver();
-            console.log(board);  
-        return gameFlow.setActivePlayer().switchPlayer();
+            board[cell].marked = marker;
+            gamePlay().checkWin();
+            gamePlay().checkGameOver();
+            gamePlay().switchPlayer();
+            displayController.updateDisplay();
         } else if (board[cell].empty !== true) {
             alert('Please choose another spot!');
-        } else if (((gameEnd == true) && (board[cell].empty !== true)) || (gameEnd == true))  {
+        } else if (gameEnd === true) {
             // do nothing
         }
-        
-    }; 
-
+    }
     return { 
         name, 
         marker,
-        playAMove
+        playMove
     };
 }
 
-const gameFlow = (() => {
-    let winner;
-    // let gameEnd = false;
+const playerOne = Player('Player One', 'X');
+const playerTwo = Player('Player Two', 'O');
 
-    const playerOne = Player('Player One', 'X');
-    const playerTwo = Player('Player Two', 'O');
-    
-    const players = [ playerOne, playerTwo ];
-    let activePlayer = players[0];
-    
-    const setActivePlayer = () => {
-        const switchPlayer = () => {
-            if (gameEnd !== true) {
-                activePlayer = activePlayer === players[0] ? players[1] : players[0];
-                console.log(activePlayer);
-                displayController.text.innerText = `${activePlayer.name}` + '\'s turn';
-                return activePlayer;
+const players = [ playerOne, playerTwo ];
+let activePlayer = players[0];
+
+const gamePlay = () => {
+
+    function switchPlayer() {
+        if (gameWin !== true) {
+            activePlayer = activePlayer === playerOne ? playerTwo : playerOne;
+            console.log('Active player is ' + activePlayer.name)
+            return activePlayer
+        }
+        
+    }
+
+    function checkWin() {
+        let board = gameBoard.gameBoardArr;
+        // horizontal
+        if (
+        (board[0].marked === board[1].marked && board[1].marked === board[2].marked && board[1].marked !== undefined) ||
+        (board[3].marked === board[4].marked && board[4].marked === board[5].marked && board[4].marked !== undefined) ||
+        (board[6].marked === board[7].marked && board[7].marked === board[8].marked && board[7].marked !== undefined)
+        ) {
+            console.log('horizontal win!');
+            gameWin = true;
+            return gameWin;
+        }
+
+        // diagonal
+        if (board[4].marked !== undefined) {
+            if (
+                (board[0].marked === board[4].marked && board[4].marked === board[8].marked) ||
+                (board[2].marked === board[4].marked && board[4].marked === board[6].marked)
+            ) {
+                console.log('diagonal win!');
+                gameWin = true;
             }
         }
-        // switchPlayer();
-        
-        return {
-            switchPlayer,
-            activePlayer
+
+        // vertical 
+        if (
+            (board[0].marked === board[3].marked && board[3].marked === board[6].marked && board[3].marked !== undefined) ||
+            (board[1].marked === board[4].marked && board[4].marked === board[7].marked && board[4].marked !== undefined) ||
+            (board[2].marked === board[5].marked && board[5].marked === board[8].marked && board[5].marked !== undefined) 
+        ) {
+            console.log('vertical win');
+            gameWin = true;
         }
-        
     }
 
     const checkGameOver = () => {
-        console.log(gameBoard.checkForWin());
-        console.log('that was win');
-        if (gameBoard.checkForWin() === true) {
-            declareWinner();
+        if (gameWin === true) {
+            // declareWinner();
             // endGame();
-            console.log('hey people');
+            let winner = activePlayer;
             gameEnd = true;
             console.log('game win is TRUE!');
-            console.log('active player after WIN is: ' + activePlayer.name);
-            displayController.text.remove();
-            displayController.text.innerText = 'The winner is ' + `${activePlayer.name}`
-            board.insertBefore(displayController.text, container);
-            return gameEnd;
-    } else console.log('nope')
+            console.log('The winner is: ' + winner.name);
+            return {winner}
+            // displayController.text.remove();
+            // displayController.text.innerText = 'The winner is ' + `${activePlayer.name}`
+            // board.insertBefore(displayController.text, container);
+            // return gameEnd;
+        } // else console.log('nope')
     }
 
-    const declareWinner = () => {
-        winner = activePlayer.name = 'Player One' ? 'Player Two' : 'Player One';
-        console.log('The winner is ' + winner);
-        return winner;
+    return {
+        switchPlayer,
+        checkWin,
+        checkGameOver
+    }
+}
+
+const displayController = (() => {
+    const text = document.createElement('div');
+    text.setAttribute('class', 'prompt');
+    text.innerText = 'Please place your marker, ' + activePlayer.name;
+    board.insertBefore(text, container);
+    
+    const updateDisplay = () => {
+        text.innerText = activePlayer.name + '\'s turn!';
+        board.insertBefore(text, container);
+        
+        if ((gameWin === true) && (gameEnd === true)) {
+            text.remove();
+            text.innerText = 'The winner is ' + activePlayer.name
+            board.insertBefore(text, container);
+        }
+
     }
 
-    // reset board function
+    // reset board
+    function resetBoard() {
+        for (let i = 0; i < 9; i++) {
+            document.getElementById(i).innerText = i;
+        }
+    }
+    // resetBoard();
+
+
+    return {
+        updateDisplay,
+        text
+    }
+    
+})();
+
+
+/*
+
+
+
+const gameFlow = (() => {
+
+
+
+    
     return {
         playerOne,
         playerTwo,
@@ -206,17 +191,11 @@ const gameFlow = (() => {
     }
 })();
 
-const displayController = (() => {
-    const text = document.createElement('div')
-    text.setAttribute('class', 'prompt');
-    text.innerText = 'Player One, please place your marker';
-    board.insertBefore(text, container);
 
-    return {
-        text
-    }
-})();
+
+*/
 
 
 //  TO DO
 // REMOVE PROMPT TEXT WHEN DECLAREWINNER RUNS AND REPLACE WITH WINNER NAME
+// REMOVE NUMBERS FROM GRID
