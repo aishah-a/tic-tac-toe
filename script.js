@@ -209,7 +209,3 @@ const displayController = ((
     }
     
 })();
-
-
-//  TO DO
-// REMOVE NUMBERS FROM GRID
